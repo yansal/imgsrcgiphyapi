@@ -54,6 +54,13 @@ func main() {
 		}
 		defer resp.Body.Close()
 
+		etag := resp.Header.Get("Etag")
+		if etag == r.Header.Get("If-None-Match") {
+			w.WriteHeader(http.StatusNotModified)
+			return
+		}
+
+		w.Header().Set("Etag", etag)
 		if _, err := io.Copy(w, resp.Body); err != nil {
 			log.Print(err)
 		}
