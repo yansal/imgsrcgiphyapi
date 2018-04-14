@@ -21,6 +21,11 @@ func main() {
 	}
 
 	log.Fatal(http.ListenAndServe(":"+port, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/favicon.ico" {
+			http.NotFound(w, r)
+			return
+		}
+
 		resp, err := http.Get(fmt.Sprintf("https://api.giphy.com/v1/gifs/random?api_key=%s&tag=%s", apiKey, r.URL.Query().Get("tag")))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
